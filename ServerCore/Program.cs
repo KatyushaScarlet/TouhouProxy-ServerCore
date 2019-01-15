@@ -14,6 +14,7 @@ namespace ServerCore
             TcpListener tcpListener = new TcpListener(IPAddress.Any, mainPort);
             tcpListener.Start();
 
+            Console.Clear();
             Console.WriteLine(string.Format("[INFO]Server is running at port {0}", mainPort));
 
             while (true)

@@ -17,14 +17,14 @@ namespace ServerCore
         public const int portReceiveMin = 30000;
         public const int portReceiveMax = 60000;
         //<客户端，转发类>
-        private static Dictionary<EndPoint, UdpForward> userList = new Dictionary<EndPoint, UdpForward>();
+        private static Dictionary<EndPoint, UdpForwardServer> userList = new Dictionary<EndPoint, UdpForwardServer>();
 
         public RemoteClient(TcpClient client)
         {
             this.client = client;
 
             // 打印连接到的客户端信息
-            Console.WriteLine(string.Format("[INFO]User from [{0}]", client.Client.RemoteEndPoint));
+            Console.WriteLine(string.Format("[INFO]New user from [{0}]", client.Client.RemoteEndPoint));
 
             // 获得流
             streamToClient = client.GetStream();
@@ -70,8 +70,8 @@ namespace ServerCore
 
                     //分配端口
                     int userPort = GetRandomPort(portReceiveMin, portReceiveMax);
-                    UdpForward udpForward = new UdpForward(userPort);//创建转发
-                    userList.Add(userEndpoint, udpForward);
+                    UdpForwardServer udpForwardServer = new UdpForwardServer(userPort);//创建转发
+                    userList.Add(userEndpoint, udpForwardServer);
 
                     messageSend = Model.Encode(Model.Server_Proxy_Start, userPort);
                     Console.WriteLine(string.Format("[INFO]New Port [{0}] for user [{1}]", userPort, client.Client.RemoteEndPoint));
@@ -99,7 +99,7 @@ namespace ServerCore
             catch (Exception ex)
             {
                 //TODO 异常捕获
-                Console.WriteLine(string.Format("[ERRO]User [{0}] ,Error Info:\n[ERRO]{1}", client.Client.RemoteEndPoint, ex.Message));
+                Console.WriteLine(string.Format("[ERRO]User [{0}],Error Info:\n[ERRO]{1}", client.Client.RemoteEndPoint, ex.Message));
                 removeForward();
                 client.Close();
                 //if (streamToClient != null)
@@ -120,6 +120,7 @@ namespace ServerCore
             {
                 if (userList.ContainsKey(client.Client.RemoteEndPoint))
                 {
+                    userList[client.Client.RemoteEndPoint].Close();
                     userList[client.Client.RemoteEndPoint] = null;
                     userList.Remove(client.Client.RemoteEndPoint);
                 }

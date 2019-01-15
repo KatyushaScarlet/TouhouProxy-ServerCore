@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ServerCore
 {
     class Model
     {
-        public const string Client_Arrive_Handshake = "Client_Arrive_Handshake";
-        public const string Client_Second_Handshake = "Client_Second_Handshake";
-        public const string Client_Change_Port = "Client_Change_Port";
-
-        public const string Server_New_Port = "Server_New_Port";
-        public const string Server_Proxy_Start = "Server_Proxy_Start";
+        public const string Client_Arrive_Handshake = "CAH";
+        public const string Server_Proxy_Start = "SPS";
 
         public static byte[] Encode(params object[] args)
         {
