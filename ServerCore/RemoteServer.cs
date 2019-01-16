@@ -23,19 +23,19 @@ namespace ServerCore
         {
             this.client = client;
 
-            // 打印连接到的客户端信息
+            //打印连接到的客户端信息
             Console.WriteLine(string.Format("[INFO]New user from [{0}]", client.Client.RemoteEndPoint));
 
-            // 获得流
+            //获得流
             streamToClient = client.GetStream();
             buffer = new byte[BufferSize];
 
-            // 在构造函数中就开始准备读取
+            //构造函数中就开始准备读取
             AsyncCallback callBack = new AsyncCallback(ReadComplete);
             streamToClient.BeginRead(buffer, 0, BufferSize, callBack, null);
         }
 
-        // 再读取完成时进行回调
+        //再读取完成时进行回调
         private void ReadComplete(IAsyncResult ar)
         {
             int bytesRead = 0;
@@ -53,7 +53,7 @@ namespace ServerCore
                 }
 
                 string[] messageArrive = Model.Decode(bytesRead, buffer);
-                Array.Clear(buffer, 0, buffer.Length);        // 清空缓存，避免脏读
+                Array.Clear(buffer, 0, buffer.Length);//清空缓存，避免脏读
 
                 byte[] messageSend = null;
 
@@ -81,10 +81,7 @@ namespace ServerCore
                      */
 
                 }
-                else if (true)
-                {
-                    //TODO 没想好干什么
-                }
+                //TODO 待续
 
                 streamToClient.Write(messageSend, 0, messageSend.Length);
                 streamToClient.Flush();
@@ -104,7 +101,6 @@ namespace ServerCore
                 client.Close();
                 //if (streamToClient != null)
                 //    streamToClient.Dispose();
-                //client.Close();        
             }
         }
 

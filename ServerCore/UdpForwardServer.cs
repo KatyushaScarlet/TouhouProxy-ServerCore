@@ -44,7 +44,7 @@ namespace ServerCore
             {
                 string[] messageArrive = Model.Decode(buffer.Length, buffer);
 
-                //debug
+                //仅供测试
                 //if (Model.ByteEquals(buffer,Model.Heartbeat))
                 //{
                 //    Console.WriteLine(string.Format("[DBUG]Heartbeat from [{0}] on port [{1}]", newPlayer, serverPort));
