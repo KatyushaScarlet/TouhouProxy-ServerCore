@@ -120,8 +120,11 @@ namespace ServerCore
             {
                 if (userList.ContainsKey(client.Client.RemoteEndPoint))
                 {
-                    userList[client.Client.RemoteEndPoint].Close();
-                    userList[client.Client.RemoteEndPoint] = null;
+                    if (userList[client.Client.RemoteEndPoint]!=null)
+                    {
+                        userList[client.Client.RemoteEndPoint].Close();
+                        userList[client.Client.RemoteEndPoint] = null;
+                    }
                     userList.Remove(client.Client.RemoteEndPoint);
                 }
             }
