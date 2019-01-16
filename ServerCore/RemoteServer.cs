@@ -114,13 +114,13 @@ namespace ServerCore
             return random.Next(min, max);
         }
 
-        private void removeForward()
+        private void removeForward()//销毁转发
         {
             lock (userList)
             {
                 if (userList.ContainsKey(client.Client.RemoteEndPoint))
                 {
-                    //userList[client.Client.RemoteEndPoint].Close();
+                    userList[client.Client.RemoteEndPoint].Close();
                     userList[client.Client.RemoteEndPoint] = null;
                     userList.Remove(client.Client.RemoteEndPoint);
                 }
