@@ -5,7 +5,7 @@ using System.Net.Sockets;
 
 namespace ServerCore
 {
-    public class RemoteClient
+    public class RemoteServer
     {
         //客户端
         private TcpClient client;
@@ -19,7 +19,7 @@ namespace ServerCore
         //<客户端，转发类>
         private static Dictionary<EndPoint, UdpForwardServer> userList = new Dictionary<EndPoint, UdpForwardServer>();
 
-        public RemoteClient(TcpClient client)
+        public RemoteServer(TcpClient client)
         {
             this.client = client;
 
@@ -120,7 +120,7 @@ namespace ServerCore
             {
                 if (userList.ContainsKey(client.Client.RemoteEndPoint))
                 {
-                    userList[client.Client.RemoteEndPoint].Close();
+                    //userList[client.Client.RemoteEndPoint].Close();
                     userList[client.Client.RemoteEndPoint] = null;
                     userList.Remove(client.Client.RemoteEndPoint);
                 }

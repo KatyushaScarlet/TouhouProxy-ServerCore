@@ -20,7 +20,7 @@ namespace ServerCore
             while (true)
             {
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
-                RemoteClient remoteClient = new RemoteClient(tcpClient);
+                RemoteServer remoteClient = new RemoteServer(tcpClient);
             }
         }
     }

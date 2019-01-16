@@ -16,6 +16,7 @@ namespace ServerCore
             this.port = port;
             udpClient = new UdpClient(port);
             Console.WriteLine(string.Format("[INFO]Forward started at port [{0}]", port));
+            //开始接收
             udpClient.BeginReceive(new AsyncCallback(ReadComplete), null);
         }
 
@@ -66,11 +67,11 @@ namespace ServerCore
             udpClient.BeginReceive(new AsyncCallback(ReadComplete), null);
         }
 
-        public void Close()
-        {
-            udpClient = null;
-            player1 = null;
-            player2 = null;
-        }
+        //public void Close()
+        //{
+        //    udpClient = null;
+        //    player1 = null;
+        //    player2 = null;
+        //}
     }
 }
