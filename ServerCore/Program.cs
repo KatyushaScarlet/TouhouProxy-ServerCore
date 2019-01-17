@@ -15,7 +15,7 @@ namespace ServerCore
             tcpListener.Start();
 
             Console.Clear();
-            Console.WriteLine(string.Format("[INFO]Server is running at port {0}", mainPort));
+            Console.WriteLine(string.Format("[{0}][INFO]Server is running at port {1}",Model.GetDatetime(), mainPort));
 
             while (true)
             {

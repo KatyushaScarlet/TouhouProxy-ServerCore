@@ -36,5 +36,10 @@ namespace ServerCore
                     return false;
             return true;
         }
+
+        public static string GetDatetime()
+        {
+            return DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
+        }
     }
 }

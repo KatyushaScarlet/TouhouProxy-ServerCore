@@ -24,7 +24,7 @@ namespace ServerCore
             this.client = client;
 
             //打印连接到的客户端信息
-            Console.WriteLine(string.Format("[INFO]New user from [{0}]", client.Client.RemoteEndPoint));
+            Console.WriteLine(string.Format("[{0}][INFO]New user from [{1}]",Model.GetDatetime(), client.Client.RemoteEndPoint));
 
             //获得流
             streamToClient = client.GetStream();
@@ -74,7 +74,7 @@ namespace ServerCore
                     userList.Add(userEndpoint, udpForwardServer);
 
                     messageSend = Model.Encode(Model.Server_Proxy_Start, userPort);
-                    Console.WriteLine(string.Format("[INFO]New Port [{0}] for user [{1}]", userPort, client.Client.RemoteEndPoint));
+                    Console.WriteLine(string.Format("[{0}][INFO]New Port [{1}] for user [{2}]",Model.GetDatetime(), userPort, client.Client.RemoteEndPoint));
                     /*
                      * 服务端返回：
                      * [Server_Proxy_Start][userPort]
@@ -96,7 +96,7 @@ namespace ServerCore
             catch (Exception ex)
             {
                 //TODO 异常捕获
-                Console.WriteLine(string.Format("[ERRO]User [{0}],Error Info:\n[ERRO]{1}", client.Client.RemoteEndPoint, ex.Message));
+                Console.WriteLine(string.Format("[{0}][ERRO]User [{1}],Error Info:\n[{0}][ERRO]{2}", Model.GetDatetime(), client.Client.RemoteEndPoint, ex.Message));
                 removeForward();
                 client.Close();
                 //if (streamToClient != null)

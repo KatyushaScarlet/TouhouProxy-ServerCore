@@ -18,7 +18,7 @@ namespace ServerCore
         {
             this.serverPort = port;
             udpClient = new UdpClient(port);
-            //解决Windows下UDP报错问题，详见 https://www.cnblogs.com/liuslayer/p/7867239.html
+            //解决Windows下UDP报错问题，详见 https://www.cnblogs.com/pasoraku/p/5612105.html
             //在linux上无此问题
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -28,7 +28,7 @@ namespace ServerCore
                 udpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
             }
 
-            Console.WriteLine(string.Format("[INFO]Forward started at port [{0}]", port));
+            Console.WriteLine(string.Format("[{0}][INFO]Forward started at port [{1}]",Model.GetDatetime(), port));
             //开始接收
             udpClient.BeginReceive(new AsyncCallback(ReadComplete), null);
         }
@@ -60,7 +60,7 @@ namespace ServerCore
                     {
                         //记录Player1
                         player1 = newPlayer;
-                        Console.WriteLine(string.Format("[INFO]Port [{0}] geted Player1 [{1}]", serverPort, newPlayer));
+                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] geted Player1 [{2}]",Model.GetDatetime(), serverPort, newPlayer));
                         //握手包不需要转发
                     }
                     //结束
@@ -71,7 +71,7 @@ namespace ServerCore
                     {
                         //记录Player2
                         player2 = newPlayer;
-                        Console.WriteLine(string.Format("[INFO]Port [{0}] geted Player2 [{1}]", serverPort, newPlayer));
+                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] geted Player2 [{2}]", Model.GetDatetime(), serverPort, newPlayer));
                         udpClient.Send(buffer, buffer.Length, player1);
                     }
                     //结束
