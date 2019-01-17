@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 
 namespace ServerCore
 {
@@ -17,12 +18,15 @@ namespace ServerCore
         {
             this.serverPort = port;
             udpClient = new UdpClient(port);
-            //解决UDP报错问题，详见 https://www.cnblogs.com/liuslayer/p/7867239.html
-            //在linux上不支持，暂时无解
-            //uint IOC_IN = 0x80000000;
-            //uint IOC_VENDOR = 0x18000000;
-            //uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            //udpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+            //解决Windows下UDP报错问题，详见 https://www.cnblogs.com/liuslayer/p/7867239.html
+            //在linux上无此问题
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                uint IOC_IN = 0x80000000;
+                uint IOC_VENDOR = 0x18000000;
+                uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
+                udpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
+            }
 
             Console.WriteLine(string.Format("[INFO]Forward started at port [{0}]", port));
             //开始接收
