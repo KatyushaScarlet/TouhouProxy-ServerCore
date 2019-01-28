@@ -32,7 +32,6 @@ namespace ServerCore
                 udpClient.Client.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
             }
 
-            Console.WriteLine(string.Format("[{0}][INFO]Forward started at port [{1}]",Model.GetDatetime(), port));
             //开始接收
             udpClient.BeginReceive(new AsyncCallback(ReadComplete), null);
         }
@@ -46,15 +45,15 @@ namespace ServerCore
 
             //TODO 异常处理
             IPEndPoint newPlayer = null;
-            byte[] buffer = udpClient.EndReceive(ar, ref newPlayer);
+            byte[] buffer = udpClient.EndReceive(ar, ref newPlayer);//原始数据
 
             if (buffer.Length > 0)
             {
-                string[] messageArrive = Model.Decode(buffer.Length, buffer);
+                string[] messageArrive = Model.Decode(buffer.Length, buffer);//解码数据
                 byte[] messageSend = null;
 
 
-                //TODO 修改为能够同时接受多个客户端
+                //TODO debug
 
                 /*
                  * 游戏数据包转发结构
@@ -66,11 +65,12 @@ namespace ServerCore
                     if (messageArrive[0] == Model.Client_Arrive_Handshake)
                     {
                         //收到握手包，记录host player，编号为0
-                        lock (forwardList)
-                        {
-                            forwardList = new Dictionary<int, IPEndPoint>();
-                            forwardList.Add(0, newPlayer);
-                        }
+                        //lock (forwardList)
+                        //{
+                        forwardList = new Dictionary<int, IPEndPoint>();
+                        forwardList.Add(0, newPlayer);
+                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] get host player [{2}]", Model.GetDatetime(),serverPort,newPlayer));
+                        //}
                     }
                 }
                 else if (GetUserIndex(newPlayer) == -1)
@@ -81,27 +81,32 @@ namespace ServerCore
                         //添加索引
                         int index = Model.GetRandomNumber(1, 255);
                         forwardList.Add(index, newPlayer);
+                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] get guest player [{2}] , now {3} guest player(s)", Model.GetDatetime(), serverPort, newPlayer, forwardList.Count - 1));
                         //转发给host player
-                        messageSend = Model.Encode(Model.Game_Data_Forward, index, buffer);
+                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, index), buffer);
                         udpClient.Send(messageSend, messageSend.Length, forwardList[0]);
                     }
                 }
-                else
+                else /*if (messageArrive[0] == Model.Game_Data_Forward)//有bug：若数据并非来自转发客户端，则不包含Game_Data_Forward*/
                 {
                     //客户端已存在，转发数据
                     if (forwardList[0].Equals(newPlayer))
                     {
                         //数据来自host player，根据数据包内的索引（index）转发给相应的客户端（查forwardList）
-                        int index = int.Parse(messageArrive[1]);
-                        IPEndPoint ip = forwardList[index];
-                        byte[] data = Encoding.UTF8.GetBytes(messageArrive[2]);
-                        udpClient.Send(data, data.Length, ip);
+                        //TODO：数据格式可能有异常
+                        if (messageArrive[0]==Model.Game_Data_Forward)
+                        {
+                            int index = int.Parse(messageArrive[1]);
+                            IPEndPoint ip = forwardList[index];
+                            byte[] data = Encoding.UTF8.GetBytes(messageArrive[2]);
+                            udpClient.Send(data, data.Length, ip);
+                        }
                     }
                     else
                     {
                         //数据来自其他客户端，转发给host player
                         int index = GetUserIndex(newPlayer);
-                        messageSend = Model.Encode(Model.Game_Data_Forward, index, buffer);
+                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, index), buffer);
                         udpClient.Send(messageSend, messageSend.Length, forwardList[0]);
                     }
                 }
@@ -177,7 +182,7 @@ namespace ServerCore
             }
             return result;
 
-            //因为ContainsValue本身时间为O(n)，所以弃用
+            //因为ContainsValue时间为O(n)，所以弃用
             //if (forwardList.ContainsValue(user))
             //{
             //    //result = (from i in forwardList
@@ -186,9 +191,6 @@ namespace ServerCore
 
             //    result = forwardList.FirstOrDefault(x => x.Value.Equals(user)).Key;
             //}
-
         }
-
-
     }
 }
