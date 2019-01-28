@@ -69,7 +69,7 @@ namespace ServerCore
                     removeForward();
 
                     //分配端口
-                    int userPort = GetRandomPort(portReceiveMin, portReceiveMax);
+                    int userPort = Model.GetRandomNumber(portReceiveMin, portReceiveMax);
                     UdpForwardServer udpForwardServer = new UdpForwardServer(userPort);//创建转发
                     userList.Add(userEndpoint, udpForwardServer);
 
@@ -95,19 +95,12 @@ namespace ServerCore
             }
             catch (Exception ex)
             {
-                //TODO 异常捕获
                 Console.WriteLine(string.Format("[{0}][ERRO]User [{1}],Error Info:\n[{0}][ERRO]{2}", Model.GetDatetime(), client.Client.RemoteEndPoint, ex.Message));
                 removeForward();
                 client.Close();
                 //if (streamToClient != null)
                 //    streamToClient.Dispose();
             }
-        }
-
-        private int GetRandomPort(int min, int max)//获取随机端口
-        {
-            Random random = new Random(Guid.NewGuid().ToString("N").GetHashCode());
-            return random.Next(min, max);
         }
 
         private void removeForward()//销毁转发
