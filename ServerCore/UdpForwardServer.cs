@@ -79,11 +79,11 @@ namespace ServerCore
                     lock (forwardList)
                     {
                         //添加索引
-                        int index = Model.GetRandomNumber(1, 255);
+                        int index = Model.GetRandomNumber(1, 1000);
                         forwardList.Add(index, newPlayer);
-                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] get guest player [{2}] , now {3} guest player(s)", Model.GetDatetime(), serverPort, newPlayer, forwardList.Count - 1));
+                        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] get new endpoint [{2}] , now {3} endpoint(s)", Model.GetDatetime(), serverPort, newPlayer, forwardList.Count - 1));
                         //转发给host player
-                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, index), buffer);
+                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, string.Format("{0:0000}", index)), buffer);//序号格式化为4位，在后方带上buffer
                         udpClient.Send(messageSend, messageSend.Length, forwardList[0]);
                     }
                 }
@@ -98,15 +98,16 @@ namespace ServerCore
                         {
                             int index = int.Parse(messageArrive[1]);
                             IPEndPoint ip = forwardList[index];
-                            byte[] data = Encoding.UTF8.GetBytes(messageArrive[2]);
-                            udpClient.Send(data, data.Length, ip);
+                            //byte[] data = Encoding.UTF8.GetBytes(messageArrive[2]);//TODO 根据位数直接截取buffer
+                            byte[] message = Model.ByteSplit(buffer, 9);//直接截取buffer位置
+                            udpClient.Send(message, message.Length, ip);
                         }
                     }
                     else
                     {
                         //数据来自其他客户端，转发给host player
                         int index = GetUserIndex(newPlayer);
-                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, index), buffer);
+                        messageSend = Model.ByteSplice(Model.Encode(Model.Game_Data_Forward, string.Format("{0:0000}", index)), buffer);//序号格式化为4位，在后方带上buffer
                         udpClient.Send(messageSend, messageSend.Length, forwardList[0]);
                     }
                 }
