@@ -46,7 +46,6 @@ namespace ServerCore
                     bytesRead = streamToClient.EndRead(ar);
                 }
 
-                //TODO 客户端断开事件
                 if (bytesRead == 0)
                 {
                     throw new Exception("User disconnect");
@@ -81,7 +80,6 @@ namespace ServerCore
                      */
 
                 }
-                //TODO 待续
 
                 streamToClient.Write(messageSend, 0, messageSend.Length);
                 streamToClient.Flush();
@@ -98,8 +96,6 @@ namespace ServerCore
                 Console.WriteLine(string.Format("[{0}][ERRO]User [{1}],Error Info:\n[{0}][ERRO]{2}", Model.GetDatetime(), client.Client.RemoteEndPoint, ex.Message));
                 removeForward();
                 client.Close();
-                //if (streamToClient != null)
-                //    streamToClient.Dispose();
             }
         }
 
