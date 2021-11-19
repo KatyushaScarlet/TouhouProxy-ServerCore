@@ -111,48 +111,6 @@ namespace ServerCore
                         udpClient.Send(messageSend, messageSend.Length, forwardList[0]);
                     }
                 }
-
-                //仅供测试
-                //if (Model.ByteEquals(buffer,Model.Heartbeat))
-                //{
-                //    Console.WriteLine(string.Format("[DBUG]Heartbeat from [{0}] on port [{1}]", newPlayer, serverPort));
-                //}
-
-                //if (player1 == null)
-                //{
-                //    if (messageArrive[0] == Model.Client_Arrive_Handshake)
-                //    {
-                //        //记录Player1
-                //        hostPlayer = newPlayer;
-                //        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] geted Host Player [{2}]",Model.GetDatetime(), serverPort, newPlayer));
-                //        //握手包不需要转发
-                //    }
-                //    //结束
-                //}
-                //else if (player2 == null)
-                //{
-                //    if (!newPlayer.Equals(player1))
-                //    {
-                //        //记录Player2
-                //        player2 = newPlayer;
-                //        Console.WriteLine(string.Format("[{0}][INFO]Port [{1}] geted Player2 [{2}]", Model.GetDatetime(), serverPort, newPlayer));
-                //        udpClient.Send(buffer, buffer.Length, player1);
-                //    }
-                //    //结束
-                //}
-                //else if (player1 != null && player2 != null)
-                //{
-                //    //相互转发
-                //    if (newPlayer.Equals(player1))
-                //    {
-                //        udpClient.Send(buffer, buffer.Length, player2);
-                //    }
-                //    else if (newPlayer.Equals(player2))
-                //    {
-                //        udpClient.Send(buffer, buffer.Length, player1);
-                //    }
-                //    //结束
-                //}
             }
             //完成时调用自身
             udpClient.BeginReceive(new AsyncCallback(ReadComplete), null);
@@ -182,16 +140,6 @@ namespace ServerCore
                 }
             }
             return result;
-
-            //因为ContainsValue时间为O(n)，所以弃用
-            //if (forwardList.ContainsValue(user))
-            //{
-            //    //result = (from i in forwardList
-            //    //              where i.Value.Equals(iPEndPoint)
-            //    //              select i.Key);
-
-            //    result = forwardList.FirstOrDefault(x => x.Value.Equals(user)).Key;
-            //}
         }
     }
 }
